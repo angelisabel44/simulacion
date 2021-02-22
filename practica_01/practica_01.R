@@ -16,5 +16,5 @@ replicas <- 30
 
 for (i in 1:replicas) {
   integral <- simulacion_MC(f, desde, hasta, cantidad)
-  print(paste("Réplica ", i, ": ", integral, sep = ""))
+  print(paste("Replica ", i, ": ", integral, sep = ""))
 }

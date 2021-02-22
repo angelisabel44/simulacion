@@ -24,5 +24,4 @@ replicas = 30
 
 for i in range(replicas):
     integral = simulacion_MC(f, desde, hasta, cantidad)
-    print(f'Réplica {i + 1}: {integral}')
-
+    print(f'Replica {i + 1}: {integral}')
