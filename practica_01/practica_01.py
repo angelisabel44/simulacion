@@ -17,26 +17,6 @@ def simulacion_MC(F, a, b, cantidad):
         acumulado += F(a + (b - a) * x)
     return ((b - a) * acumulado)/cantidad
 
-desde = 3
-hasta = 7
-cantidad = 50000
-replicas = 100
-
-integrales = []
-for i in range(replicas):
-    integral = simulacion_MC(f, desde, hasta, 1000000)
-    integrales.append(integral)
-    #print(f'Replica {i + 1}: {integral}')
-
-
-import pandas as pd
-df_resultados = pd.DataFrame()
-
-df_resultados['replica'] = range(1, 101)
-df_resultados['wolfram'] = 0.048834
-df_resultados['100k'] = integrales
-
-
 def truncate(number, digits) -> float:
     stepper = 10.0 ** digits
     return trunc(stepper * number) / stepper
@@ -51,8 +31,32 @@ def comparar_digitos(valor):
         cantidad += 1
     return cantidad
 
-df_resultados['dig_50k'] = df_resultados['100k'].apply(comparar_digitos)
+desde = 3
+hasta = 7
+replicas = 100
 
+import pandas as pd
+df_datos = pd.DataFrame({'replica': [], 'muestra': [], 'integral': [], 'digitos': []})
+
+muestras = [ 10 ** i for i in range(4, 7) ]
+for cantidad in muestras:
+    valores = [ simulacion_MC(f, desde, hasta, cantidad) for i in range(replicas) ]
+    digitos = [ comparar_digitos(valor) for valor in valores ]
+    df_datos = df_datos.append(pd.DataFrame({'replica': range(replicas),
+                                             'muestra': [cantidad] * replicas,
+                                             'integral': valores,
+                                             'digitos': digitos}),
+                               ignore_index = True)
+
+df_resultados = df_datos.groupby('muestra').agg({'digitos': ['min', 'mean', 'median']})
+df_resultados.columns = df_resultados.columns.droplevel()
+df_resultados.reset_index(level = 0, inplace = True)
+
+barplot = df_resultados.plot.bar(x = 'muestra', y = 'min')
+boxplot = df_datos.boxplot(column = ['digitos'], by = 'muestra')
+
+import seaborn as sns
+violinplot = sns.violinplot(x = "muestra", y = 'digitos', data = df_datos)
 
 
 
