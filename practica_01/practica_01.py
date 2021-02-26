@@ -33,7 +33,7 @@ def comparar_digitos(valor):
 
 desde = 3
 hasta = 7
-replicas = 100
+replicas = 30
 
 import pandas as pd
 df_datos = pd.DataFrame({'replica': [], 'muestra': [], 'integral': [], 'digitos': []})
